@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Sink Test App</title>
+		<link rel="icon" type="image/ico" href="favicon.ico">
+		<script type='text/javascript' src='shared.js'></script>
+		<script type='text/javascript' src='frame.js'></script>
+		<script type='text/javascript'>
+			function Controller(root_el) {
+				this.root_el = root_el;
+				this.items_list = root_el.querySelector("#items");
+				this.create_item_btn = root_el.querySelector("#create_item_btn");
+				this.new_item_input = root_el.querySelector("#new_item");
+				this.data = { items: [] };
+				this.sink = new DataSink();
+				return this;
+			}
+
+			Controller.prototype.initialize = function() {
+				this.sink.initialize();
+				this.sink.request_data({
+					'filters': [
+						{
+							'field':'kind',
+							'value':'item',
+							'cmp':'eq'
+						}
+					]
+				});
+			}
+
+			Controller.prototype.update_items = function() {
+
+			}
+
+			function initialize(data) {
+				var root_el = document.getElementById('root');
+				var controller = new Controller(root_el);
+				controller.initialize();
+				window.controller = controller;
+			}
+		</script>
+	</head>
+	<body>
+		<div id='root'>
+			<ul id='items'>
+			</ul>
+			<input type='text' id='new_item' />
+			<input type='button' id='create_item_btn' />
+		</div>
+		<script type='text/javascript'>
+			var seed_data = {
+				items: [
+					'go home',
+					'shower',
+					'do laundry',
+					'sleep'
+				]
+			}
+		</script>
+		<script type='text/javascript'>
+			initialize(seed_data);
+		</script>
+	</body>
+</html>
