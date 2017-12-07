@@ -1,5 +1,5 @@
 function generate_guid() {
-	return null;
+	return (new Date()).getTime();
 }
 
 function RPC(port,method,data) {
@@ -14,12 +14,12 @@ function RPC(port,method,data) {
 			guid: that.guid,
 			params: data
 		});
+		port.start();
 	});
 	return this;
 }
 
 RPC.prototype.on_message_received = function(resolve,reject,evnt) {
-	debugger;
 	if(evnt.data.responding_to === this.guid) {
 		// guids match - this is a response!
 		if(evnt.data.is_error) {
@@ -43,8 +43,8 @@ RPCListener.prototype.on_message_received = function(evnt) {
 	var data = evnt.data;
 	var method = data.method;
 	var respond_to = data.guid;
+	var that = this;
 	var promise = new Promise(this.obj[method].bind(this.obj,data.params));
-	debugger;
 	promise.then(function(value){
 		console.log("Responding with",value);
 		that.port.postMessage({

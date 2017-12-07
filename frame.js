@@ -11,7 +11,8 @@ function DataSink(schema) {
 
 DataSink.prototype.initialize = function() {
 	this.worker = new SharedWorker("/worker.js");
-	this.worker.port.addEventListener("message", this.handleWorkerMessage.bind(this));
+	//this.worker.port.addEventListener("message", this.handleWorkerMessage, false);
+	this.worker.port.addEventListener("messageerror", this.handleWorkerMessage, false);
 	this.worker.port.start();
 }
 
