@@ -7,17 +7,17 @@
 
 self.importScripts('/shared.js');
 
-function DataSink() {
+function WorkerDataSink() {
 	return this;
 }
 
-DataSink.prototype.on_connect = function(e) {
+WorkerDataSink.prototype.on_connect = function(e) {
 	var port = e.ports[0];
 	port.listener = new RPCListener(port,this);
 	port.start();
 }
 
-DataSink.prototype.heartbeat = function(params,resolve,reject) {
+WorkerDataSink.prototype.heartbeat = function(params,resolve,reject) {
 	console.log("Worker receieved",params);
 	var LUT = {
 		'ping':'pong',
@@ -26,6 +26,6 @@ DataSink.prototype.heartbeat = function(params,resolve,reject) {
 	resolve(LUT[params]);
 }
 
-var sink = new DataSink();
+var sink = new WorkerDataSink();
 
 self.addEventListener("connect", sink.on_connect.bind(sink));

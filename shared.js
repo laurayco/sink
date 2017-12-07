@@ -44,7 +44,9 @@ RPCListener.prototype.on_message_received = function(evnt) {
 	var method = data.method;
 	var respond_to = data.guid;
 	var promise = new Promise(this.obj[method].bind(this.obj,data.params));
+	debugger;
 	promise.then(function(value){
+		console.log("Responding with",value);
 		that.port.postMessage({
 			responding_to: respond_to,
 			result: value,
