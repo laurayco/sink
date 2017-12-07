@@ -1,5 +1,5 @@
 function generate_guid() {
-	return (new Date()).getTime();
+	return (new Date()).getTime() * Math.random();
 }
 
 function RPC(port,method,data) {
@@ -20,8 +20,8 @@ function RPC(port,method,data) {
 }
 
 RPC.prototype.on_message_received = function(resolve,reject,evnt) {
+	// guids match - this is a response!
 	if(evnt.data.responding_to === this.guid) {
-		// guids match - this is a response!
 		if(evnt.data.is_error) {
 			reject(evnt.data.result);
 		} else {
@@ -46,7 +46,6 @@ RPCListener.prototype.on_message_received = function(evnt) {
 	var that = this;
 	var promise = new Promise(this.obj[method].bind(this.obj,data.params));
 	promise.then(function(value){
-		console.log("Responding with",value);
 		that.port.postMessage({
 			responding_to: respond_to,
 			result: value,

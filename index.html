@@ -17,8 +17,9 @@
 				return this;
 			}
 
-			Controller.prototype.initialize = function() {
+			Controller.prototype.initialize = function(seed_data) {
 				this.sink.initialize();
+				this.sink.pulse(10000);
 				this.sink.request_data({
 					'filters': [
 						{
@@ -27,6 +28,8 @@
 							'cmp':'eq'
 						}
 					]
+				}).then(function(data){
+					console.log("Received data",data);
 				});
 			}
 
@@ -37,8 +40,8 @@
 			function initialize(data) {
 				var root_el = document.getElementById('root');
 				var controller = new Controller(root_el);
-				controller.initialize();
 				window.controller = controller;
+				controller.initialize();
 			}
 		</script>
 	</head>

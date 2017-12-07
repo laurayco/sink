@@ -12,19 +12,27 @@ function DataSink(schema) {
 DataSink.prototype.initialize = function() {
 	this.worker = new SharedWorker("/worker.js");
 	//this.worker.port.addEventListener("message", this.handleWorkerMessage, false);
-	this.worker.port.addEventListener("messageerror", this.handleWorkerMessage, false);
+	this.worker.port.addEventListener("messageerror", this.handleWorkerError, false);
 	this.worker.port.start();
 }
 
-DataSink.prototype.request_data = function(query) {
-	var rpc = new RPC(this.worker.port,'heartbeat','ping');
-	rpc.promise.then(function(response){
-		console.log("Frame received",response);
+DataSink.prototype.pulse = function(timeout) {
+	var that = this;
+	(new RPC(this.worker.port,'heartbeat','ping')).promise.then(function(response){
+		setTimeout(that.pulse.bind(that,timeout), timeout);
 	}).catch(function(response){
-		console.error("Frame receieved",response);
+		console.error("Error with pulse",response);
 	});
+}
+
+DataSink.prototype.request_data = function(query) {
+	return (new RPC(this.worker.port,'request_data',query)).promise;
 }
 
 DataSink.prototype.handleWorkerMessage = function(e) {
 	console.log(e);
+}
+
+DataSink.prototype.handleWorkerError = function(e) {
+	console.error(e);
 }

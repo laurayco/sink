@@ -8,17 +8,22 @@
 self.importScripts('/shared.js');
 
 function WorkerDataSink() {
+	this.lastContacts = {};
 	return this;
 }
 
 WorkerDataSink.prototype.on_connect = function(e) {
 	var port = e.ports[0];
+	this.lastContacts[port] = new Date();
 	port.listener = new RPCListener(port,this);
 	port.start();
 }
 
+WorkerDataSink.prototype.request_data = function(params,resolve,reject) {
+	resolve(params);
+}
+
 WorkerDataSink.prototype.heartbeat = function(params,resolve,reject) {
-	console.log("Worker receieved",params);
 	var LUT = {
 		'ping':'pong',
 		'pong':'ping'
